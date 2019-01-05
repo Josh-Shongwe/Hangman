@@ -1,0 +1,104 @@
+import acm.graphics.*;
+import acm.program.*;
+import acm.util.*;
+import java.awt.*;
+
+public class Hangman extends ConsoleProgram {
+  private HangmanLexicon lexicon;
+  private RandomGenerator rgen = RandomGenerator.getINstance();
+  private String secretWord;
+  private String displayedWord = " ";
+  private int guesses = 8;
+  private HangmanCanvas canvas;
+  
+  public void run() {
+    setUpGame();
+    playGame();
+  }
+  
+  //Creates dashes for every character in the secret word.
+  private void createDashedWord() {
+    for(int i = 0; i < secretWord.length(); i++ ) {
+      displayedWord = displayedWord + "-";
+    }
+  }
+  
+  //Prompts the user to enter a character.
+  //If the user enters more than one letter, promt the user to enter only one letter.
+  //After the user enters a character, if the index returns a value greater than or equal to zero the gues sis correct.
+  private void checkString() {
+    while(!(secretWord.equals(displayedWord)) && guesses > 0) {
+      println("The word now looks like this: " + displayedWord);
+      String userGuess = readLine("Your guess: ");
+      if(userGuess.charAt(0).isLetter()) {
+        char ch = userGuess.charAt(0);
+        if(Character.isLowerCase(ch)) {
+          ch = Character.toUpperCase(ch);
+        }
+        while(true) {
+          userGuess = readLine("Incorrect input. Please enter one letter: ");
+        } else if(!(userGuess.charAt(0).isLetter())){
+          break;
+        }
+     }
+     if(secretWord.indexOf(ch) >= 0 ) {
+      changedDisplayedWord(ch);
+      println("Your guess is correct.");
+     }else{
+     guesses--;
+     println("there are no " + ch + "'s in the word.");
+     canvas.noteIncorrectGuess(ch);
+     }
+     println("You have " + guesses + " guesses left");
+   }
+   gameResult();
+ }
+ 
+ //After the user enters their guess, loops throught the word to determine if the character appears in the secret word/
+ //If true update the displayed word, replacing the dashes with the correct characters.
+ private void changeDisplayedWord(char ch) {
+  //Loop necessary if the letter appears more than one time in the word.
+    for(int i = 0; i < secretWord.length(); i++) {
+      if(ch == secretWord.charAt(i)) {
+        if( i > 0 ) {
+          displayedWord = displayedWord.substring(0, i) + ch + displayedWord.substring(i+1);
+          }
+          if( i == 0 ) {
+            displayedWord = ch + displayedWord.substring(1);
+            }
+            canvas.displayWord(displayedWord);
+          }
+       }
+   }
+ //Simple decomposition to print different lines depending on the game result.
+ private void gameResult(){
+  if(guesses > 0 ){
+    println("You guessed the word: " + secretWord);
+    println("You win.");
+  } else if(guesses == 0) {
+    println("You're completely hung.");
+    println("The word was: " + secretWord);
+    println("You lose.");
+  }
+}
+//Sets up the game resetting the canvas, depicting the amount of characters in the hidden word, etc.
+
+private void setUpGame() {
+  canvas.reset();
+  canvas.displayWord(displayedWord);
+  println("Welcome to Hangman!);
+  lexicon = new HangmanLexicon();
+  secretWord = lexicon.getWord(rgen.nextInt(0, lexicon.getWordCoutn() - 1) );
+  createDashedWord();
+ }
+ 
+ private void playGame() {
+  checkString();
+ }
+ 
+ public void init(){ 
+  canvas = new HangmanCanvas();
+  add(canvas);
+ }
+}
+        
