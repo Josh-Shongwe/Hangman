@@ -1,0 +1,175 @@
+import acm.graphics.*;
+
+import java.awt.Color;
+import java.awt.Font;
+
+public class HangmanCanvas extends GCanvas {
+  private String incorrectGuess = " ";
+  private GLabel gameOver;
+  
+//Resets the display so that only the scaffold appears.
+  public void reset() {
+    createScaffold();
+  }
+  
+/** Updates the word on the screen to correspond to the current state of the game. The argument string shows what letters
+* have been guessed so far; unguessed letters are indicated by hyphens.
+* /
+  public void displayWord(String word) {
+    double wordX = getWidth()/4;
+    double wordY = getHeight() - 2*HEAD_RADIUS;
+    GLabel hiddenWord = new GLabel(word, wordX, wordY);
+      //Extension: Spciing up the black & white colorway with some green.
+    hiddenWord.setColor(Color.GREEN);
+    if(getElementAt(wordX, wordY) != null) {
+      remove(getElementAt(wordX, wordY);
+      }
+    add(hiddenWord);
+    }
+    
+/** Updates the display to correspond to an incorrect guess by the user. Calling this method causes the next body part to 
+* appear on the scaffold and adds he ltter to the list of incorrect guesses that appears at the bottom of the window.
+*/
+  public void noteIncorrectGuess(char letter) {
+    double guessX = getWidth()/4;
+    double guessY = getHeight() - HEAD_RADIUS;
+    //Every incorrect guess is added to a string and displayed under the displayedWords string.
+    incorrectGuess = inccortetGuess + letter;
+    GLabel wrongGuesses = new GLabel(incorrectGuess, guessX, guessY);
+    //Extension: Spicing up the black & white colorway some red.
+    wrongGuesses.setColor(Color.RED);
+    add(wrongGuesses);
+    //Every incorrect guess adds to the stirng length, thus when the string increases in length a new body part is
+    //added to the canvas.
+    if(incorrectGuess.length() == 1) {
+      createHead();
+    } else if(incorrectGuess.length() == 2){
+      createBody();
+    } else if(incorrectGuess.length() == 3){ 
+      createLeftArm();
+    } else if(incorrectGuess.length() == 4){
+      createRightArm();
+    } else if(incorrectGuess.length() == 5){
+      createRightFoot();
+    } else if(incorrectGuess.length() == 6){
+      createLeftFoot();
+    } else if(incorrectGuess.length() == 7){
+      createRightFoot();
+      createGameOver();
+    }
+  }
+  
+  private void createHead() {
+    double headX = getWidth()/2 - UPPER_ARM_LENGTH - HEAD_RADIUS + BEAM_LENGTH;
+    double headY = getWidth()/2 - BODY_LENGTH - 2*HEAD_RADIUS;
+    GOval head = new GOval(headX, headY, 2*HEAD_RADIUS, 2*HEAD_RADIUS);
+    add(head);
+  }
+  
+  private void createBody() {
+    double bodyX = getWidth()/2 + HEAD_RADIUS + UPPER_ARM_LENGTH/2;
+    double bodyY1 = getHeight()/2 - BODY_LENGTH;
+    double bodyY2 = bodyY1 + BODY_LENGTH;
+    GLine body = new GLine(bodyX, bodyY1, bodyX, bodyY2);
+    add(body);
+  }
+  
+  private void createLeftArm() {
+    double armX1 = getWidth()/2 + HEAD_RADIUS + UPPER_ARM__LENGTH/2;
+    double armX2 = armX1 + UPPER_ARM_LENGTH;
+    double armY1 = getHeight()/2 - BODY_LENGTH + ARM_OFFSET_FROM_HEAD;
+    GLine lefttArm1 = new GLine(armX1, armY1, armX2, armY1);
+    add(leftArm1);
+    double armY2 = armY1 + LOWER_ARM_LENGTH;
+    GLine leftArm2 = new GLine(armX2, armY1, armX2, armY2);
+    add(leftArm2);
+  }
+  
+  private void createRightArm() {
+    double armX1 = getWidth()/2 + HEAD_RADIUS + UPPER_ARM_LENGTH/2;
+    double armX2 = armX1 + UPPER_ARM_LENGTH;
+    double armY1 = getHeight()/2 - BODY_LENGTH + ARM_OFFSET_FROM_HEAD;
+    GLine rightArm1 = new GLine(armX1, armY1, armX2, armY1);
+    add(rightArm1);
+    double armY2 = armY1 + LOWER_ARM_LENGTH;
+    GLine rightArm2 = new GLine(armX2, armY1, armX2, armY2);
+    add(rightArm2);
+  }
+  
+  private void createRightLeg() {
+    double legX1 = getWidth()/2 + UPPER_ARM_LENGTH + HEAD_RADIUS;
+    double legX2 = legX1 - HIP_WIDTH;
+    double legY1 = getHeight9)/2;
+    GLine rightLeg1 = new GLine(legX1, legY1, legX2, legY1);
+    add(rightLeg1);
+    double legY2 = legY1 + LEG_LENGTH;
+    GLine rightLeg2 = new GLine(LegX1, legY1, legX1, legY2);
+    add(rightLeg2);
+  }
+  
+  private void createLeftLeg() {
+    double legX1 = getWidth(0/2 + UPPER_ARM_LENGTH/2 + HEAD_RADIUS;
+    double legX2 = legX1 - HIP_WIDTH;
+    double legY! = getHeight9)/2;
+    GLine leftLeg1 = new GLine(legX1, legY1, legX2, legY1);
+    add(leftLeg1);
+    double legY2 = legY1 + LEG_LENGTH;
+    GLine leftLeg2 = new GLine(legX2, legY1, legX2, legY2);
+    add(leftLeg2);
+  }
+  
+  private void createLeftFoot() {
+    double footX1 = getWidth()/2 + HEAD_RADIUS + UPPER_ARM_LENGTH/2 - HIP_WIDTH;
+    double footX2 = footX1 - FOOT_LENGTH;
+    double footY1 = getHeight()/2 + LEG_LENGTH;
+    GLine leftFoot = new GLine(footX1, footY1, footX2, footY1);
+    add(leftFoot);
+  }
+  
+  private void createRightFoot() {
+    double footX1 = getWidth()/2 + HEAD_RADIUS +UPPER_ARM_LENGTH/2 + HIP_WIDTH;
+    double footX2 = footX1 + FOOT_LENGTH;
+    double footY1 = getHeight()/2 + LEG_LENGTH;
+    GLine rightFoot = new GLine(footX1, footY1, footX2, footY1);
+    add(rightFoot);
+  }
+  
+  private void createScaffold() {
+    double scaffoldX1 = getWidth()/2 - UPPER_ARM_LENGTH;
+    double scaffoldY1 = getHeight()/2 - 2*HEAD_RADIUS - BODY_LENGTH - ROPE_LENGTH;
+    double scaffoldY2 = scaffoldY1 + SCAFFOLD_HEIGHT;
+    double beamX = scaffoldX1 + BEAM_LENGTH;
+    double ropeY = scaffoldY1 + ROPE_LENGTH;
+    GLine scaffold = new GLine(scaffoldX1, scaffoldY1, scaffoldX1, scaffoldY2);
+    GLine beam = new GLine(scaffoldX1, scaffoldY1, beamX, scaffoldY1);
+    GLine rope = new GLine(beamX, scaffoldY1, beamX, ropeY);
+    add(scaffold);
+    add(beam);
+    add(rope);
+  }
+  
+  //Extension: Game Over!
+  public void createGameOver() {
+    double gameOvesrX = getWidth()/2 - gameOver.getwidth()/2;
+    double gameOverY = getHeight()/2 - gameOver.getascent()/2;
+    gameOver = new GLabel("Game Over!", gameOverX, gameOverY);
+    Font newFont = new Font("Comic Sans MS", Font.BOLD, 84);
+    gameOver.setFont(newFont);
+    add(gameOver);
+  }
+  
+  //Constants for the simple version of the picture (in pixels).
+  private static final int SCAFFOLD_HEIGHT = 360;
+  private static final int BEAM_LENGTH = 144;
+  private static final int ROPE_LENGTH = 18;
+  private static final int HEAD_RADIUS = 36;
+  private static final int BODY_LENGTH = 144;
+  private static final int ARM_OFFSET_FROM_HEAD = 28;
+  private static final int UPPER_ARM_LENGTH = 72;
+  private static final int LOWER_ARM_LENGTH = 44;
+  private static final int HIP_WIDTH = 36;
+  private static final int LEG_LENGTH = 108;
+  private static final int FOOT_LENGTH = 28;
+}
+  
+    
